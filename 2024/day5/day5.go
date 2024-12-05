@@ -159,7 +159,6 @@ func makeRowValid(page []int, rules map[int]map[int]bool) {
 			if rules[secondNumber][firstNumber] {
 				page[i] = secondNumber
 				page[j] = firstNumber
-				i = 0
 			}
 		}
 	}
