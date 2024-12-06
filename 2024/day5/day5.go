@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -53,6 +54,7 @@ func part1() int {
 	return res
 }
 
+// 6257
 func part2() int {
 	fileData, err := os.ReadFile("/home/udz/advent_of_code/2024/day5/input2")
 	check(err)
@@ -143,23 +145,13 @@ func isRowValid(rowNumbers []int, rules map[int]map[int]bool) bool {
 }
 
 func makeRowValid(page []int, rules map[int]map[int]bool) {
-	for i := 0; i < len(page); i++ {
-		for j := i + 1; j < len(page); j++ {
-			firstNumber := page[i]
-			secondNumber := page[j]
-
-			if rules[firstNumber] == nil && rules[secondNumber] == nil {
-				continue
-			}
-
-			if rules[firstNumber][secondNumber] {
-				continue
-			}
-
-			if rules[secondNumber][firstNumber] {
-				page[i] = secondNumber
-				page[j] = firstNumber
-			}
+	sort.SliceStable(page, func(a, b int) bool {
+		firstNumber := page[a]
+		secondNumber := page[b]
+		if rules[secondNumber] != nil && rules[secondNumber][firstNumber] {
+			return false
 		}
-	}
+
+		return true
+	})
 }
