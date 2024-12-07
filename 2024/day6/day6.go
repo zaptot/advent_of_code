@@ -42,6 +42,7 @@ func part1() int {
 	return visitedCount
 }
 
+// 1836
 func part2() int {
 	fileData, err := os.ReadFile("/home/udz/advent_of_code/2024/day6/input1")
 	check(err)
@@ -76,6 +77,7 @@ func findStartPosition(board []string) [2]int {
 
 	panic("position not found")
 }
+
 func moveWithoutObstacles(board []string, startPosition [2]int, visited map[[2]int]map[int]bool) (int, bool) {
 	return move(board, startPosition, visited, [2]int{-1, -1})
 }
