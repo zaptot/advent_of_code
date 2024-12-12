@@ -42,10 +42,8 @@ func part1() int {
 				continue
 			}
 
-			// flower := string(fileRows[i][j])
-			perimeter, area := helper(fileRows, i, j, visited)
+			perimeter, area := helper(fileRows, i, j, visited, getFieldPerimeter)
 			mult := perimeter * area
-			// fmt.Printf("A region of %s plants with price %d * %d = %d \n", flower, area, perimeter, mult)
 			res += mult
 		}
 	}
@@ -67,10 +65,8 @@ func part2() int {
 				continue
 			}
 
-			// flower := string(fileRows[i][j])
-			sides, area := helper2(fileRows, i, j, visited)
+			sides, area := helper(fileRows, i, j, visited, getFieldSlides)
 			mult := sides * area
-			// fmt.Printf("A region of %s plants with price %d * %d = %d \n", flower, area, sides, mult)
 			res += mult
 		}
 	}
@@ -78,7 +74,13 @@ func part2() int {
 	return res
 }
 
-func helper(fileRows []string, i int, j int, visited map[int]map[int]bool) (int, int) {
+func helper(
+	fileRows []string,
+	i int,
+	j int,
+	visited map[int]map[int]bool,
+	caculator func([]string, int, int) int,
+) (int, int) {
 	if visited[i][j] {
 		return 0, 0
 	}
@@ -89,7 +91,7 @@ func helper(fileRows []string, i int, j int, visited map[int]map[int]bool) (int,
 
 	visited[i][j] = true
 	directions := [][2]int{{1, 0}, {0, 1}, {-1, 0}, {0, -1}}
-	perimeter := getFieldPerimeter(fileRows, i, j)
+	perimeter := caculator(fileRows, i, j)
 	area := 1
 
 	for di := 0; di < len(directions); di++ {
@@ -100,42 +102,12 @@ func helper(fileRows []string, i int, j int, visited map[int]map[int]bool) (int,
 			continue
 		}
 
-		subP, subA := helper(fileRows, nextI, nextJ, visited)
+		subP, subA := helper(fileRows, nextI, nextJ, visited, caculator)
 		perimeter += subP
 		area += subA
 	}
 
 	return perimeter, area
-}
-
-func helper2(fileRows []string, i int, j int, visited map[int]map[int]bool) (int, int) {
-	if visited[i][j] {
-		return 0, 0
-	}
-
-	if visited[i] == nil {
-		visited[i] = make(map[int]bool)
-	}
-
-	visited[i][j] = true
-	directions := [][2]int{{1, 0}, {0, 1}, {-1, 0}, {0, -1}}
-	sides := getFieldSlides(fileRows, i, j)
-	area := 1
-
-	for di := 0; di < len(directions); di++ {
-		nextI := i + directions[di][0]
-		nextJ := j + directions[di][1]
-		if nextI < 0 || nextJ < 0 || nextI >= len(fileRows) || nextJ >= len(fileRows[0]) ||
-			fileRows[i][j] != fileRows[nextI][nextJ] {
-			continue
-		}
-
-		subS, subA := helper2(fileRows, nextI, nextJ, visited)
-		sides += subS
-		area += subA
-	}
-
-	return sides, area
 }
 
 func getFieldPerimeter(fileRows []string, i int, j int) int {
